@@ -45,8 +45,8 @@ app.post('/api/generate-guide', async (req, res) => {
     ]);
 
     const stack = detectStack(files);
-    const commands = buildCommands(stack);
-    const guide = buildGuide({ meta, stack, commands });
+    const commands = buildCommands(stack, files);
+    const guide = buildGuide({ meta, stack, commands, files, readme });
     const beginnerExplanation = buildBeginnerExplanation({ meta, stack });
     const mermaidDiagram = buildMermaidDiagram(stack);
 

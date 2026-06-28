@@ -14,14 +14,47 @@ const REQUIREMENTS = {
   unknown: ['See repository README for requirements'],
 };
 
-function buildGuide({ meta, stack, commands }) {
+const NODE_STACKS = new Set(['nextjs', 'vite', 'react', 'express', 'node']);
+const WEB_STACKS  = new Set(['nextjs', 'vite', 'react', 'express', 'node', 'python', 'ruby', 'php']);
+
+function buildGuide({ meta, stack, commands, files, readme }) {
   const requirements = REQUIREMENTS[stack.detected] || REQUIREMENTS.unknown;
   const warnings = [];
 
-  if (meta.archived) warnings.push('This repository is archived and may no longer be maintained.');
-  if (!meta.description) warnings.push('No repository description — documentation may be limited.');
-  if (stack.confidence === 'low') warnings.push('Stack detection confidence is low — the guide may be inaccurate.');
-  if (stack.detected === 'unknown') warnings.push('Could not detect the project type. Manual inspection recommended.');
+  // Repo-level warnings
+  if (meta.archived) {
+    warnings.push('This repository is archived and may no longer be maintained.');
+  }
+  if (!meta.description) {
+    warnings.push('No repository description — documentation may be limited.');
+  }
+
+  // Stack detection confidence
+  if (stack.confidence === 'low') {
+    warnings.push('Stack detection confidence is low — the guide may be inaccurate.');
+  }
+  if (stack.detected === 'unknown') {
+    warnings.push('Could not detect the project type. Manual inspection recommended.');
+  }
+
+  // No run/dev script in package.json
+  if (NODE_STACKS.has(stack.detected) && files && files['package.json']) {
+    let scripts = {};
+    try { scripts = (JSON.parse(files['package.json']).scripts) || {}; } catch { /* ignore */ }
+    if (!scripts.dev && !scripts.start) {
+      warnings.push('No start or dev script found in package.json — check the README for how to run this project.');
+    }
+  }
+
+  // No .env.example (likely needs environment variables)
+  if (files && !files['.env.example'] && WEB_STACKS.has(stack.detected)) {
+    warnings.push('No .env.example found. This project may require environment variables or API keys — check the README.');
+  }
+
+  // README missing
+  if (!readme) {
+    warnings.push('README was not found or could not be read. Setup instructions may be missing.');
+  }
 
   const sections = [
     {
