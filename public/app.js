@@ -8,6 +8,9 @@ const views = {
 
 function showView(name) {
   Object.values(views).forEach((v) => v.classList.remove('active'));
+  // Remove 'hidden' because non-initial views start with class="view hidden"
+  // and .hidden { display: none !important } overrides .view.active { display: flex }
+  views[name].classList.remove('hidden');
   views[name].classList.add('active');
 }
 

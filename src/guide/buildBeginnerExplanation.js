@@ -15,7 +15,7 @@ const EXPLANATIONS = {
     `${meta.name} is a Node.js project. Node.js lets you run JavaScript outside the browser — useful for scripts, APIs, and backend services. Run npm install to get dependencies, then node <entry-file>.js to start it.`,
 
   python: (meta) =>
-    `${meta.name} is a Python project. Create an isolated environment first (python -m venv venv), activate it, then install dependencies with pip install -r requirements.txt. Run the main file to start the app.`,
+    `${meta.name} is a Python project. Create an isolated environment first (python -m venv venv), activate it, then install dependencies using the project's manifest (requirements.txt, pyproject.toml, or Pipfile). Run the main file to start the app.`,
 
   rust: (meta) =>
     `${meta.name} is written in Rust, a language built for speed and safety. Rust uses Cargo as its package manager — cargo run compiles and runs the project in one step. You'll need to install Rust from rust-lang.org.`,
