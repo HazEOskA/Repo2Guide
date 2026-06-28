@@ -39,10 +39,10 @@ async function fetchRepoFiles(owner, repo) {
     { headers }
   );
 
-  if (!rootRes.ok) return {};
+  if (!rootRes.ok) return { files: {}, rootTree: [] };
 
   const rootItems = await rootRes.json();
-  if (!Array.isArray(rootItems)) return {};
+  if (!Array.isArray(rootItems)) return { files: {}, rootTree: [] };
 
   const toFetch = rootItems.filter(
     (item) => item.type === 'file' && KNOWN_FILES.has(item.name)
@@ -62,7 +62,15 @@ async function fetchRepoFiles(owner, repo) {
     })
   );
 
-  return results;
+  const rootTree = rootItems
+    .map((item) => ({ name: item.name, type: item.type, size: item.size || 0 }))
+    .sort((a, b) => {
+      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    })
+    .slice(0, 30);
+
+  return { files: results, rootTree };
 }
 
 module.exports = fetchRepoFiles;

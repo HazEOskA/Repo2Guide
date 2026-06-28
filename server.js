@@ -11,6 +11,8 @@ const detectStack = require('./src/github/detectStack');
 const buildGuide = require('./src/guide/buildGuide');
 const buildCommands = require('./src/guide/buildCommands');
 const buildBeginnerExplanation = require('./src/guide/buildBeginnerExplanation');
+const buildValidationSteps = require('./src/guide/buildValidationSteps');
+const buildCommonMistakes = require('./src/guide/buildCommonMistakes');
 const buildMermaidDiagram = require('./src/diagrams/buildMermaidDiagram');
 const extractReadmeImages = require('./src/visual/extractReadmeImages');
 const resolveGithubImageUrls = require('./src/visual/resolveGithubImageUrls');
@@ -38,16 +40,19 @@ app.post('/api/generate-guide', async (req, res) => {
 
     const { owner, repo } = parseRepoUrl(url);
 
-    const [meta, files, readme] = await Promise.all([
+    const [meta, filesResult, readme] = await Promise.all([
       fetchRepoMeta(owner, repo),
       fetchRepoFiles(owner, repo),
       fetchReadme(owner, repo),
     ]);
 
+    const { files, rootTree } = filesResult;
     const stack = detectStack(files);
     const commands = buildCommands(stack, files);
     const guide = buildGuide({ meta, stack, commands, files, readme });
     const beginnerExplanation = buildBeginnerExplanation({ meta, stack });
+    const validationSteps = buildValidationSteps(stack);
+    const commonMistakes = buildCommonMistakes(stack);
     const mermaidDiagram = buildMermaidDiagram(stack);
 
     const rawImages = extractReadmeImages(readme);
@@ -77,6 +82,9 @@ app.post('/api/generate-guide', async (req, res) => {
       guide: guide.sections,
       beginnerExplanation,
       visual,
+      repoMap: rootTree,
+      validationSteps,
+      commonMistakes,
     });
   } catch (err) {
     if (err.status === 404) {
