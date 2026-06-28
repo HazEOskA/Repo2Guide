@@ -1,5 +1,15 @@
 // Parses README markdown/HTML for image references.
-// Limited to the first 5 unique images found.
+//
+// WHY the 5-image limit:
+//   Safety   — caps the number of third-party URLs that enter the pipeline and
+//              get resolved/returned to clients, limiting the blast radius if a
+//              README embeds unexpected or adversarial image sources.
+//   MVP scope — the visual brief only needs representative images (typically 1–2)
+//              to build a meaningful description; exhaustive coverage adds no value.
+//   Performance — READMEs can contain dozens of badges and inline images; capping
+//              keeps response size predictable without truncating meaningful content.
+//
+// This limit is intentional and not a bug. Raise it only with justification in DECISIONS.md.
 function extractReadmeImages(readmeContent) {
   if (!readmeContent || typeof readmeContent !== 'string') return [];
 

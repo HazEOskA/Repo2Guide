@@ -61,8 +61,13 @@ POST /api/generate-guide    → { summary, stack, requirements, commands,
 3. **URL validation first** — `validateRepoUrl` runs before any GitHub API call.
 4. **github.com only** — any other hostname is rejected with a 400.
 5. **No arbitrary paths** — file paths are never user-controlled; only the repo URL is accepted.
-6. **Image size limit** — only the first 5 README images are processed.
-7. **No image download** — `resolveGithubImageUrls` returns URLs; it does not fetch or store image content.
+6. **Image limit: 5 (safety + MVP + performance)** — `extractReadmeImages` caps at 5 unique images.
+   - *Safety*: limits the number of third-party URLs entering the pipeline per request, reducing exposure if a README embeds unexpected or adversarial sources.
+   - *MVP scope*: a visual brief only needs representative images (typically 1–2); exhaustive scanning adds no product value at this stage.
+   - *Performance*: READMEs can contain dozens of badge images; capping keeps the pipeline predictable.
+   To change this limit, update `extractReadmeImages.js` and record the decision in `DECISIONS.md`.
+7. **No image download** — `resolveGithubImageUrls` returns URLs only; it does not fetch, proxy, or store image content.
+8. **No image generation** — `buildVisualBrief` returns a `[PLACEHOLDER]` `imagePrompt` string. `generated` is always `false`. No generative AI API is called. The UI must not imply otherwise.
 
 ## Confidence Levels
 

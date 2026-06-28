@@ -143,7 +143,7 @@ function renderResult(data) {
   el('r-name').textContent = summary.name || '';
   el('r-description').textContent = summary.description || 'No description provided.';
   const ghLink = el('r-link');
-  ghLink.href = summary.url || '#';
+  ghLink.href = safeUrl(summary.url);
   el('r-language').textContent = summary.language ? `Language: ${summary.language}` : 'Language: unknown';
   el('r-stars').textContent = `★ ${(summary.stars || 0).toLocaleString()}`;
   el('r-forks').textContent = `⑂ ${(summary.forks || 0).toLocaleString()}`;
@@ -225,7 +225,7 @@ function renderResult(data) {
     (visual.screenshots || []).forEach((s) => {
       const a = document.createElement('a');
       a.className = 'screenshot-chip';
-      a.href = s.resolvedUrl;
+      a.href = safeUrl(s.resolvedUrl);
       a.target = '_blank';
       a.rel = 'noopener';
       a.textContent = s.alt || 'Image';
@@ -255,4 +255,22 @@ document.getElementById('copy-btn').addEventListener('click', () => {
 
 function el(id) {
   return document.getElementById(id);
+}
+
+// ── XSS safety notes ──────────────────────────────────────────────────────────
+// All API-derived content that reaches the DOM goes through one of:
+//   - el.textContent = value          (safe — treated as plain text, no HTML parsing)
+//   - el.createElement + textContent  (safe — same reason)
+//   - safeUrl(url) for href attrs     (guards against javascript: protocol)
+//   - innerHTML = ''                  (clearing only — no injection)
+//
+// confBadge.className interpolation is NOT innerHTML — className sets a CSS class
+// string, not HTML, so it cannot inject markup or execute scripts.
+//
+// imagePrompt is intentionally never rendered in the UI (it lives in the API
+// response as a [PLACEHOLDER] stub only).
+
+function safeUrl(url) {
+  if (typeof url !== 'string') return '#';
+  return /^https?:\/\//i.test(url.trim()) ? url.trim() : '#';
 }
