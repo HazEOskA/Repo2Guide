@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repo2Guide — Beginner guides for any GitHub repo</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- EMPTY STATE -->
+  <div id="view-empty" class="view active">
+    <header class="hero">
+      <h1 class="logo">Repo2Guide</h1>
+      <p class="tagline">Paste a GitHub repo. Get a beginner-friendly launch guide.</p>
+    </header>
+
+    <main class="hero-main">
+      <!-- Video / fallback -->
+      <div class="video-wrapper">
+        <video
+          id="demo-video"
+          class="demo-video"
+          src="/assets/repo2guide-demo.mp4"
+          poster="/assets/poster.png"
+          autoplay
+          loop
+          muted
+          playsinline
+          aria-label="Repo2Guide demo"
+        ></video>
+        <div id="video-fallback" class="video-fallback hidden">
+          <p class="fallback-headline">Paste a GitHub repo.<br>Get a beginner-friendly launch guide.</p>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <form id="guide-form" class="input-form">
+        <div class="input-row">
+          <input
+            id="repo-url"
+            type="url"
+            placeholder="https://github.com/owner/repo"
+            autocomplete="off"
+            spellcheck="false"
+            required
+            aria-label="GitHub repository URL"
+          />
+          <button type="submit" id="generate-btn">Generate Guide</button>
+        </div>
+        <p class="input-hint">Public repositories only &mdash; no code is cloned or executed</p>
+      </form>
+    </main>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div id="view-loading" class="view hidden">
+    <header class="hero small">
+      <h1 class="logo">Repo2Guide</h1>
+    </header>
+    <main class="scan-main">
+      <p class="scan-title">Analyzing repository&hellip;</p>
+      <ul class="scan-steps" id="scan-steps">
+        <li class="step" data-step="0">Validating URL</li>
+        <li class="step" data-step="1">Fetching repository metadata</li>
+        <li class="step" data-step="2">Scanning configuration files</li>
+        <li class="step" data-step="3">Detecting tech stack</li>
+        <li class="step" data-step="4">Building guide</li>
+      </ul>
+    </main>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="view-error" class="view hidden">
+    <header class="hero small">
+      <h1 class="logo">Repo2Guide</h1>
+    </header>
+    <main class="error-main">
+      <div class="error-card">
+        <span class="error-icon">&#9888;</span>
+        <p id="error-message" class="error-text"></p>
+        <button id="error-retry-btn" class="btn-secondary">Try a different URL</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- RESULT STATE -->
+  <div id="view-result" class="view hidden">
+    <header class="result-header">
+      <h1 class="logo small">Repo2Guide</h1>
+      <button id="result-back-btn" class="btn-ghost">&larr; Try another</button>
+    </header>
+
+    <main class="result-main">
+      <!-- Summary -->
+      <section class="card summary-card">
+        <div class="summary-top">
+          <div>
+            <h2 id="r-name" class="repo-name"></h2>
+            <p id="r-description" class="repo-desc"></p>
+          </div>
+          <a id="r-link" href="#" target="_blank" rel="noopener" class="gh-link">View on GitHub ↗</a>
+        </div>
+        <div class="meta-chips">
+          <span id="r-language" class="chip"></span>
+          <span id="r-stars" class="chip"></span>
+          <span id="r-forks" class="chip"></span>
+          <span id="r-archived" class="chip chip-warn hidden">Archived</span>
+        </div>
+        <div class="stack-row">
+          <span>Stack detected:</span>
+          <strong id="r-stack"></strong>
+          <span id="r-confidence" class="confidence-badge"></span>
+        </div>
+      </section>
+
+      <!-- Warnings -->
+      <section id="warnings-card" class="card warning-card hidden">
+        <h3 class="card-title">Heads up</h3>
+        <ul id="r-warnings"></ul>
+      </section>
+
+      <!-- Beginner explanation -->
+      <section class="card">
+        <h3 class="card-title">What is this project?</h3>
+        <p id="r-explanation"></p>
+      </section>
+
+      <!-- Requirements -->
+      <section class="card">
+        <h3 class="card-title">What you need installed</h3>
+        <ul id="r-requirements" class="req-list"></ul>
+      </section>
+
+      <!-- Commands -->
+      <section class="card">
+        <h3 class="card-title">How to run it</h3>
+        <div id="r-commands"></div>
+      </section>
+
+      <!-- Visual brief -->
+      <section id="visual-card" class="card hidden">
+        <h3 class="card-title">Visual brief</h3>
+        <p id="r-visual-brief"></p>
+        <p id="r-visual-disclaimer" class="visual-disclaimer hidden"></p>
+        <div id="r-screenshots"></div>
+      </section>
+
+      <!-- Architecture diagram -->
+      <section class="card">
+        <h3 class="card-title">Architecture diagram</h3>
+        <p class="mermaid-hint">
+          Paste this into
+          <a href="https://mermaid.live" target="_blank" rel="noopener">mermaid.live</a>
+          to visualize the structure.
+        </p>
+        <pre id="r-diagram" class="diagram-pre"></pre>
+        <button class="btn-copy" id="copy-btn">Copy diagram</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
