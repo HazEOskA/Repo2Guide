@@ -77,7 +77,7 @@
     </header>
     <main class="error-main">
       <div class="error-card">
-        <span class="error-icon">&#9888;</span>
+        <div class="error-icon">&#9888;</div>
         <p id="error-message" class="error-text"></p>
         <button id="error-retry-btn" class="btn-secondary">Try a different URL</button>
       </div>
@@ -176,17 +176,19 @@
       <!-- Architecture diagram -->
       <section class="card">
         <h3 class="card-title">Architecture diagram</h3>
-        <p class="mermaid-hint">
-          Paste this into
-          <a href="https://mermaid.live" target="_blank" rel="noopener">mermaid.live</a>
-          to visualize the structure.
-        </p>
-        <pre id="r-diagram" class="diagram-pre"></pre>
-        <button class="btn-copy" id="copy-btn">Copy diagram</button>
+        <div id="r-diagram-rendered" class="diagram-rendered"></div>
+        <div class="diagram-footer">
+          <pre id="r-diagram" class="diagram-source hidden"></pre>
+          <div class="diagram-actions">
+            <button class="btn-copy" id="copy-btn">Copy source</button>
+            <button class="btn-ghost" id="toggle-source-btn">Show source</button>
+          </div>
+        </div>
       </section>
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>
