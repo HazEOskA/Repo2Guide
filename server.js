@@ -14,6 +14,7 @@ const buildBeginnerExplanation = require('./src/guide/buildBeginnerExplanation')
 const buildValidationSteps = require('./src/guide/buildValidationSteps');
 const buildCommonMistakes = require('./src/guide/buildCommonMistakes');
 const buildMermaidDiagram = require('./src/diagrams/buildMermaidDiagram');
+const buildAsciiDiagram = require('./src/diagrams/buildAsciiDiagram');
 const extractReadmeImages = require('./src/visual/extractReadmeImages');
 const resolveGithubImageUrls = require('./src/visual/resolveGithubImageUrls');
 const chooseVisualMode = require('./src/visual/chooseVisualMode');
@@ -54,6 +55,7 @@ app.post('/api/generate-guide', async (req, res) => {
     const validationSteps = buildValidationSteps(stack);
     const commonMistakes = buildCommonMistakes(stack);
     const mermaidDiagram = buildMermaidDiagram(stack);
+    const asciiDiagram = buildAsciiDiagram(stack);
 
     const rawImages = extractReadmeImages(readme);
     const resolvedImages = resolveGithubImageUrls(rawImages, owner, repo, meta.default_branch || 'main');
@@ -79,6 +81,7 @@ app.post('/api/generate-guide', async (req, res) => {
       commands,
       warnings: guide.warnings,
       mermaidDiagram,
+      asciiDiagram,
       guide: guide.sections,
       beginnerExplanation,
       visual,

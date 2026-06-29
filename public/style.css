@@ -808,6 +808,26 @@ button[type="submit"]:disabled {
 
 .screenshot-chip:hover { background: #e0e3ff; }
 
+/* ASCII diagram card */
+.ascii-pre {
+  background: #0a0914;
+  border: 1px solid #1e1a3a;
+  border-radius: var(--radius-sm);
+  padding: 1.1rem 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  white-space: pre;
+  overflow-x: auto;
+  color: #c4b5fd;
+  letter-spacing: .01em;
+}
+
+.ascii-pre::selection,
+.ascii-pre *::selection {
+  background: rgba(139,92,246,.35);
+}
+
 /* Diagram */
 .diagram-rendered {
   min-height: 60px;

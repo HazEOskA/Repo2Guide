@@ -144,7 +144,7 @@ document.getElementById('result-back-btn').addEventListener('click', () => {
 function renderResult(data) {
   const {
     summary, stack, requirements, commands, warnings,
-    mermaidDiagram, guide, beginnerExplanation, visual,
+    mermaidDiagram, asciiDiagram, guide, beginnerExplanation, visual,
     repoMap, validationSteps, commonMistakes,
   } = data;
 
@@ -272,7 +272,10 @@ function renderResult(data) {
     visualCard.classList.add('hidden');
   }
 
-  // Diagram — store source for copy, render SVG visually
+  // ASCII diagram
+  el('r-ascii').textContent = asciiDiagram || '';
+
+  // Mermaid diagram — store source for copy, render SVG visually
   const diagramSource = mermaidDiagram || '';
   el('r-diagram').textContent = diagramSource;
   renderMermaidDiagram(diagramSource);
@@ -340,6 +343,16 @@ async function renderMermaidDiagram(source) {
     container.innerHTML = '';
   }
 }
+
+// ── Copy ASCII diagram ────────────────────────────────
+document.getElementById('ascii-copy-btn').addEventListener('click', () => {
+  const text = el('r-ascii').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('ascii-copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  });
+});
 
 // ── Copy diagram source ───────────────────────────────
 document.getElementById('copy-btn').addEventListener('click', () => {
